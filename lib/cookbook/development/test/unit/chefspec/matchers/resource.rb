@@ -1,6 +1,5 @@
 module ChefSpec
   module Matchers
-
     RSpec::Matchers.define :ready_resource_with_attribute do |resource_type, resource_name, attributes|
       match do |chef_run|
         found_resource = chef_run.find_resource(resource_type, resource_name)
@@ -14,7 +13,7 @@ module ChefSpec
           "\n\n  " + inspect_other_resources(chef_run, resource_type, attributes).join("\n  ") + "\n "
       end
 
-      failure_message_for_should_not do |chef_run|
+      failure_message_for_should_not do |_chef_run|
         "Should not have found execute[#{resource_name}] with action [:nothing] && #{attributes}"
       end
 
@@ -23,7 +22,7 @@ module ChefSpec
         attributes.each_pair { |key, value| parameter, param_value = key, value }
         resources = []
         chef_run.find_resources(resource_type).each do |resource|
-          resources << "#{resource_type}[#{resource.name}] has:\n\t\taction: #{resource.action.inspect}\n\t\t#{parameter}: `#{resource.send(parameter).to_s}`"
+          resources << "#{resource_type}[#{resource.name}] has:\n\t\taction: #{resource.action.inspect}\n\t\t#{parameter}: `#{resource.send(parameter)}`"
         end
         resources
       end

@@ -2,7 +2,6 @@ require 'version'
 require 'rake/tasklib'
 
 module CookbookDevelopment
-
   class VersionFile
     VERSION_FILE = File.join(Dir.pwd, 'VERSION')
 

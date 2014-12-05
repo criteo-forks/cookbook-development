@@ -18,7 +18,7 @@ module CookbookDevelopment
       kitchen_config = Kitchen::Config.new
       Kitchen.logger = Kitchen.default_file_logger
 
-      namespace "kitchen" do
+      namespace 'kitchen' do
         kitchen_config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
           task instance.name do
@@ -27,22 +27,22 @@ module CookbookDevelopment
           end
         end
 
-        desc "Run all test instances"
+        desc 'Run all test instances'
         task :all do
           destroy = ENV['KITCHEN_DESTROY'] || 'passing'
           concurrency = ENV['KITCHEN_CONCURRENCY'] || '1'
           require 'kitchen/cli'
-          Kitchen::CLI.new([], {concurrency: concurrency.to_i, destroy: destroy}).test()
+          Kitchen::CLI.new([], concurrency: concurrency.to_i, destroy: destroy).test
         end
       end
 
       desc 'Runs Foodcritic linting'
       FoodCritic::Rake::LintTask.new do |task|
         task.options = {
-          :search_gems => true,
-          :fail_tags => ['any'],
-          :tags => ['~FC003', '~FC015'],
-          :exclude_paths => ['vendor/**/*']
+          search_gems: true,
+          fail_tags: ['any'],
+          tags: ['~FC003', '~FC015'],
+          exclude_paths: ['vendor/**/*']
         }
       end
 
@@ -61,7 +61,7 @@ module CookbookDevelopment
 
       desc 'Run unit tests [rubocop, foodcritic, rspec]'
       task :utest do
-        [:rubocop, :foodcritic, :rspec ].each do |task|
+        [:rubocop, :foodcritic, :rspec].each do |task|
           Rake::Task[task].invoke
         end
       end
@@ -76,32 +76,32 @@ module CookbookDevelopment
       task :utest_header do
         puts '====> Running unit tests'.blue
       end
-      task :utest => :utest_header
+      task utest: :utest_header
 
       task :itest_header do
         puts '====> Running integration tests'.blue
       end
-      task :itest => :itest_header
+      task itest: :itest_header
 
       task :rspec_test_header do
-        puts "-----> Running unit tests with chefspec".cyan
+        puts '-----> Running unit tests with chefspec'.cyan
       end
-      task :rspec => :rspec_test_header
+      task rspec: :rspec_test_header
 
       task :foodcritic_header do
-        puts "-----> Linting with foodcritic".cyan
+        puts '-----> Linting with foodcritic'.cyan
       end
-      task :foodcritic => :foodcritic_header
+      task foodcritic: :foodcritic_header
 
       task :rubocop_header do
-        puts "-----> Running rubocop".cyan
+        puts '-----> Running rubocop'.cyan
       end
-      task :rubocop => :rubocop_header
+      task rubocop: :rubocop_header
 
       task :itest_header do
-        puts "-----> Running integration tests with test-kitchen".cyan
+        puts '-----> Running integration tests with test-kitchen'.cyan
       end
-      task :itest => :itest_header
+      task itest: :itest_header
     end
   end
 end

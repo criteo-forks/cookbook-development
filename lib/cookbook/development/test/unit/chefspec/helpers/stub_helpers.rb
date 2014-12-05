@@ -1,5 +1,4 @@
 module StubHelpers
-
   def stub_include_recipe
     # Don't worry about external cookbook dependencies
     Chef::Cookbook::Metadata.any_instance.stub(:depends)
@@ -26,18 +25,18 @@ def stub_locations(options)
   when :chef_vault
     stub_databag_type(ChefVault::Item, options)
   else
-    raise "Data bag type #{type} unknown"
+    fail "Data bag type #{type} unknown"
   end
 end
 
 def stub_databag_type(type, options)
   locations = options.delete(:locations) || ['bld']
-  stub_data_bag_item('rally', 'locations').and_return({'known_locations' => locations})
+  stub_data_bag_item('rally', 'locations').and_return('known_locations' => locations)
 
   options.each do |key, value|
     unless key.to_s.end_with? *locations
       locations.each do |location|
-        unless options.has_key? "#{key}_#{location}"
+        unless options.key? "#{key}_#{location}"
           type.stub(:load).with('rally', "#{key}_#{location}") { throw Net::HttpServerException }
         end
       end

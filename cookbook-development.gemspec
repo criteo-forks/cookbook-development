@@ -8,14 +8,14 @@ Gem::Specification.new do |spec|
   spec.version       = Cookbook::Development::VERSION
   spec.authors       = ['Rally Software Development Corp']
   spec.email         = ['rallysoftware-cookbooks@rallydev.com']
-  spec.description   = %q{Rally Software Development Corp cookbook development}
-  spec.summary       = %q{Rally Software Development Corp cookbook development}
+  spec.description   = 'Rally Software Development Corp cookbook development'
+  spec.summary       = 'Rally Software Development Corp cookbook development'
   spec.homepage      = ''
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
+  spec.executables   = spec.files.grep(/^bin\//) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(/^(test|spec|features)\//)
   spec.require_paths = ['lib']
 
   spec.add_dependency 'berkshelf', '~>3.1'

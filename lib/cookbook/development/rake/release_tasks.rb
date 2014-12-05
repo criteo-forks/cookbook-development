@@ -4,7 +4,7 @@ module CookbookDevelopment
     attr_reader :project_dir
     attr_reader :berks_file
 
-    TROUBLESHOOTING_MSG = "Refer to https://github.com/RallySoftware-cookbooks/chef-tutorials/blob/master/troubleshooting/ci.md to resolve this issue."
+    TROUBLESHOOTING_MSG = 'Refer to https://github.com/RallySoftware-cookbooks/chef-tutorials/blob/master/troubleshooting/ci.md to resolve this issue.'
 
     def initialize
       @project_dir   = Dir.pwd
@@ -16,8 +16,8 @@ module CookbookDevelopment
 
     def define
       desc 'Does a berks upload --except :test'
-      task :upload do |task|
-        Berkshelf::Berksfile.from_file(berks_file, :except => :test).upload
+      task :upload do |_task|
+        Berkshelf::Berksfile.from_file(berks_file, except: :test).upload
       end
 
       desc 'Runs the full test suite and then does a berks upload from CI'
@@ -37,7 +37,7 @@ module CookbookDevelopment
         release_version = version
         release_tag = version_tag(release_version)
 
-        raise "Tag #{release_tag} has already been created.\n\nThis may be caused by a failed build. #{TROUBLESHOOTING_MSG}\n\n" if already_tagged?(release_tag)
+        fail "Tag #{release_tag} has already been created.\n\nThis may be caused by a failed build. #{TROUBLESHOOTING_MSG}\n\n" if already_tagged?(release_tag)
 
         tag_version(release_version, release_tag) do
           berks_upload
@@ -78,13 +78,13 @@ module CookbookDevelopment
     def git_checkout
       cmd = 'git checkout .'
       out, code = sh_with_code(cmd)
-      raise "Couldn't git pull. `#{cmd}' failed with the following output:\n\n#{out}\n" unless code == 0
+      fail "Couldn't git pull. `#{cmd}' failed with the following output:\n\n#{out}\n" unless code == 0
     end
 
     def git_pull
       cmd = 'git pull --rebase origin master'
       out, code = sh_with_code(cmd)
-      raise "Couldn't git pull. `#{cmd}' failed with the following output:\n\n#{out}\n" unless code == 0
+      fail "Couldn't git pull. `#{cmd}' failed with the following output:\n\n#{out}\n" unless code == 0
     end
 
     def git_push
@@ -96,12 +96,12 @@ module CookbookDevelopment
     def perform_git_push(options = 'origin master')
       cmd = "git push #{options}"
       out, code = sh_with_code(cmd)
-      raise "Couldn't git push. `#{cmd}' failed with the following output:\n\n#{out}\n\nThis could be a result of unmerged commits on master. #{TROUBLESHOOTING_MSG}\n\n" unless code == 0
+      fail "Couldn't git push. `#{cmd}' failed with the following output:\n\n#{out}\n\nThis could be a result of unmerged commits on master. #{TROUBLESHOOTING_MSG}\n\n" unless code == 0
     end
 
     def sh(cmd, &block)
       out, code = sh_with_code(cmd, &block)
-      code == 0 ? out : raise(out.empty? ? "Running `#{cmd}' failed. Run this command directly for more detailed output." : out)
+      code == 0 ? out : fail(out.empty? ? "Running `#{cmd}' failed. Run this command directly for more detailed output." : out)
     end
 
     def already_tagged?(tag)
@@ -118,7 +118,7 @@ module CookbookDevelopment
       if File.exist?(version_file)
         Version.current(version_file)
       else
-        raise <<-MSG
+        fail <<-MSG
         The versioning/release process relies on having a VERSION file in the root of
         your cookbook as well as the version attribute in metadata.rb reading
         from said VERSION file.
@@ -137,12 +137,12 @@ module CookbookDevelopment
     end
 
     def sh_with_code(cmd, &block)
-      cmd << " 2>&1"
+      cmd << ' 2>&1'
       outbuf = `#{cmd}`
-      if $? == 0
+      if $CHILD_STATUS == 0
         block.call(outbuf) if block
       end
-      [outbuf, $?]
+      [outbuf, $CHILD_STATUS]
     end
   end
 end
