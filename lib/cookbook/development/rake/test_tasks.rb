@@ -46,8 +46,8 @@ module CookbookDevelopment
         }
       end
 
-      desc 'Runs unit tests'
-      RSpec::Core::RakeTask.new(:unit) do |task|
+      desc 'Runs rspec tests'
+      RSpec::Core::RakeTask.new(:rspec) do |task|
         task.pattern = FileList[File.join(project_dir, 'test', 'unit', '**/*_spec.rb')]
       end
 
@@ -55,31 +55,53 @@ module CookbookDevelopment
       RuboCop::RakeTask.new(:rubocop)
 
       desc 'Runs integration tests'
-      task :integration do
+      task :itest do
         Rake::Task['kitchen:all'].invoke
       end
 
-      desc 'Run all tests and linting'
-      task :test do
-        Rake::Task['foodcritic'].invoke
-        Rake::Task['unit'].invoke
-        Rake::Task['integration'].invoke
+      desc 'Run unit tests [rubocop, foodcritic, rspec]'
+      task :utest do
+        [:rubocop, :foodcritic, :rspec ].each do |task|
+          Rake::Task[task].invoke
+        end
       end
 
-      task :unit_test_header do
+      desc 'Run all unit and integration tests'
+      task :testall do
+        [:itest, :utest].each do |task|
+          Rake::Task[task].invoke
+        end
+      end
+
+      task :utest_header do
+        puts '====> Running unit tests'.blue
+      end
+      task :utest => :utest_header
+
+      task :itest_header do
+        puts '====> Running integration tests'.blue
+      end
+      task :itest => :itest_header
+
+      task :rspec_test_header do
         puts "-----> Running unit tests with chefspec".cyan
       end
-      task :unit => :unit_test_header
+      task :rspec => :rspec_test_header
 
       task :foodcritic_header do
         puts "-----> Linting with foodcritic".cyan
       end
       task :foodcritic => :foodcritic_header
 
-      task :integration_header do
+      task :rubocop_header do
+        puts "-----> Running rubocop".cyan
+      end
+      task :rubocop => :rubocop_header
+
+      task :itest_header do
         puts "-----> Running integration tests with test-kitchen".cyan
       end
-      task :integration => :integration_header
+      task :itest => :itest_header
     end
   end
 end

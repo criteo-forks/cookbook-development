@@ -98,7 +98,7 @@ be applies instantly.
 
 ## Rake Tasks
 
-### test
+### testall
 
 This task runs through the full suite of tests avaiable and is the
 appropriate way to test a cookbook before pushing your changes to github
@@ -106,23 +106,23 @@ appropriate way to test a cookbook before pushing your changes to github
 
 Runs the following tasks:
 
-- knife_test
+- rubocop
 - foodcritic
-- unit
-- integration
+- rspec
+- kitchen:all
 
-### unit
+### utest
 
 This task allows you to run everything except integration tests for fast
 feedback on your changes during development
 
 Runs the following tasks:
 
-- knife_test
+- rubocop
 - foodcritic
-- unit
+- rspec
 
-### integration
+### itest
 
 This task runs only the test-kitchen convergence and integration test
 suites. It's a little faster than 'rake test', but not much.
