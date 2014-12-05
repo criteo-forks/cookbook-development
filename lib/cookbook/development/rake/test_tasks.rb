@@ -1,4 +1,5 @@
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 require 'kitchen/rake_tasks'
 require 'foodcritic'
 require 'berkshelf'
@@ -49,6 +50,9 @@ module CookbookDevelopment
       RSpec::Core::RakeTask.new(:unit) do |task|
         task.pattern = FileList[File.join(project_dir, 'test', 'unit', '**/*_spec.rb')]
       end
+
+      desc 'Runs rubocop tests'
+      RuboCop::RakeTask.new(:rubocop)
 
       desc 'Runs integration tests'
       task :integration do
